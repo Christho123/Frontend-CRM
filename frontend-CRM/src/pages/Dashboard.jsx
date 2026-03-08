@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../context';
 import { useDashboardSection } from '../context/DashboardSectionContext';
-import { getAnalyticsSummary, getAuditSessions, getUserDetail, getUserProfile } from '../services';
+import { getAnalyticsSummary, getAuditSessions, getAuditUserDetail, getUserProfile } from '../services';
 import './Dashboard.css';
 
 function getFullName(profile) {
@@ -50,8 +50,10 @@ function DashboardSection() {
 
   return (
     <section className="dashboard__section">
-      <h1 className="dashboard__title">Dashboard</h1>
-      <p className="dashboard__welcome">Bienvenido, {fullName}</p>
+      <header className="dashboard__header">
+        <h1 className="dashboard__title">Panel de Resumen</h1>
+        <p className="dashboard__welcome">Bienvenido, {fullName.split(' ')[0] || fullName}</p>
+      </header>
       <p className="dashboard__session">Sesión iniciada como {user?.email || '—'}</p>
 
       <div className="dashboard__cards">
@@ -78,6 +80,7 @@ function AuditoriaSection() {
   const [audits, setAudits] = useState({ results: [], count: 0 });
   const [loadingAudits, setLoadingAudits] = useState(true);
   const [detailUser, setDetailUser] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
   useEffect(() => {
@@ -87,20 +90,29 @@ function AuditoriaSection() {
       .finally(() => setLoadingAudits(false));
   }, []);
 
-  const handleVerDetalle = (auditUserId) => {
+  const handleVerDetalle = (userId, eventFromRow) => {
     setLoadingDetail(true);
     setDetailUser(null);
-    getUserDetail(auditUserId)
+    setSelectedEvent(eventFromRow);
+    getAuditUserDetail(userId)
       .then(setDetailUser)
-      .catch(() => setDetailUser(null))
+      .catch(() => {
+        setDetailUser(null);
+        setSelectedEvent(null);
+      })
       .finally(() => setLoadingDetail(false));
   };
 
-  const handleCerrarDetalle = () => setDetailUser(null);
+  const handleCerrarDetalle = () => {
+    setDetailUser(null);
+    setSelectedEvent(null);
+  };
 
   return (
     <section className="dashboard__section">
-      <h1 className="dashboard__title">Auditoría</h1>
+      <header className="dashboard__header">
+        <h1 className="dashboard__title">Auditoría</h1>
+      </header>
 
       {loadingAudits ? (
         <p className="dashboard__loading">Cargando auditoría…</p>
@@ -141,7 +153,7 @@ function AuditoriaSection() {
                       <button
                         type="button"
                         className="dashboard__btn-detalle"
-                        onClick={() => handleVerDetalle(r.user_id)}
+                        onClick={() => handleVerDetalle(r.user_id, r)}
                       >
                         Detalle
                       </button>
@@ -154,7 +166,7 @@ function AuditoriaSection() {
         </div>
       )}
 
-      {detailUser && (
+      {(detailUser || loadingDetail) && (
         <div className="dashboard__modal-overlay" onClick={handleCerrarDetalle}>
           <div className="dashboard__modal" onClick={(e) => e.stopPropagation()}>
             <div className="dashboard__modal-header">
@@ -164,44 +176,87 @@ function AuditoriaSection() {
               </button>
             </div>
             {loadingDetail ? (
-              <p>Cargando…</p>
-            ) : (
               <div className="dashboard__modal-body">
-                <div className="dashboard__modal-user">
-                  <p><strong>Usuario:</strong> {detailUser.user?.user_name}</p>
-                  <p><strong>Email:</strong> {detailUser.user?.email}</p>
-                  <p><strong>Nombre completo:</strong> {detailUser.user?.full_name || '—'}</p>
-                  <p><strong>Documento:</strong> {detailUser.user?.document_number || '—'}</p>
-                  <p><strong>Fecha alta:</strong>{' '}
-                    {detailUser.user?.date_joined
-                      ? new Date(detailUser.user.date_joined).toLocaleString('es')
-                      : '—'}
-                  </p>
-                </div>
-                <h4>Eventos</h4>
-                <div className="dashboard__modal-events">
-                  {(detailUser.events || []).map((ev) => (
-                    <div key={ev.id} className="dashboard__modal-event">
-                      <span className="dashboard__modal-event-action">{ev.action}</span>
-                      <span className="dashboard__modal-event-datetime">
-                        {ev.datetime
-                          ? new Date(ev.datetime).toLocaleString('es', {
-                              dateStyle: 'short',
-                              timeStyle: 'short',
-                            })
+                <p className="dashboard__modal-loading">Cargando…</p>
+              </div>
+            ) : detailUser ? (
+              <div className="dashboard__modal-body">
+                <div className="dashboard__modal-user-wrap">
+                  {detailUser.user?.profile_photo_url && (
+                    <div className="dashboard__modal-photo">
+                      <img src={detailUser.user.profile_photo_url} alt="" />
+                    </div>
+                  )}
+                  <div className="dashboard__modal-fields">
+                    <div className="dashboard__modal-field">
+                      <span className="dashboard__modal-field-label">Usuario</span>
+                      <span className="dashboard__modal-field-value">{detailUser.user?.user_name || '—'}</span>
+                    </div>
+                    <div className="dashboard__modal-field">
+                      <span className="dashboard__modal-field-label">Email</span>
+                      <span className="dashboard__modal-field-value">{detailUser.user?.email || '—'}</span>
+                    </div>
+                    <div className="dashboard__modal-field">
+                      <span className="dashboard__modal-field-label">Nombre completo</span>
+                      <span className="dashboard__modal-field-value">{detailUser.user?.full_name || '—'}</span>
+                    </div>
+                    <div className="dashboard__modal-field">
+                      <span className="dashboard__modal-field-label">Documento</span>
+                      <span className="dashboard__modal-field-value">{detailUser.user?.document_number || '—'}</span>
+                    </div>
+                    <div className="dashboard__modal-field">
+                      <span className="dashboard__modal-field-label">Teléfono</span>
+                      <span className="dashboard__modal-field-value">{detailUser.user?.phone || '—'}</span>
+                    </div>
+                    <div className="dashboard__modal-field">
+                      <span className="dashboard__modal-field-label">Estado</span>
+                      <span className="dashboard__modal-field-value">{detailUser.user?.is_active ? 'Activo' : 'Inactivo'}</span>
+                    </div>
+                    <div className="dashboard__modal-field">
+                      <span className="dashboard__modal-field-label">Fecha de alta</span>
+                      <span className="dashboard__modal-field-value">
+                        {detailUser.user?.date_joined
+                          ? new Date(detailUser.user.date_joined).toLocaleString('es')
                           : '—'}
                       </span>
-                      {ev.detail && (
-                        <span className="dashboard__modal-event-detail">
-                          {JSON.stringify(ev.detail)}
+                    </div>
+                  </div>
+                </div>
+                <div className="dashboard__modal-event-section">
+                  <h4 className="dashboard__modal-event-title">Evento de la fila</h4>
+                  {selectedEvent ? (
+                    <div className="dashboard__modal-event-fields">
+                      <div className="dashboard__modal-field">
+                        <span className="dashboard__modal-field-label">Acción</span>
+                        <span className="dashboard__modal-field-value">{selectedEvent.action || '—'}</span>
+                      </div>
+                      <div className="dashboard__modal-field">
+                        <span className="dashboard__modal-field-label">Fecha y hora</span>
+                        <span className="dashboard__modal-field-value">
+                          {selectedEvent.datetime
+                            ? new Date(selectedEvent.datetime).toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' })
+                            : '—'}
                         </span>
+                      </div>
+                      <div className="dashboard__modal-field">
+                        <span className="dashboard__modal-field-label">IP</span>
+                        <span className="dashboard__modal-field-value">{selectedEvent.ip || '—'}</span>
+                      </div>
+                      {selectedEvent.detail != null && (
+                        <div className="dashboard__modal-field dashboard__modal-field--full">
+                          <span className="dashboard__modal-field-label">Detalle</span>
+                          <span className="dashboard__modal-field-value">
+                            {typeof selectedEvent.detail === 'object' ? JSON.stringify(selectedEvent.detail) : String(selectedEvent.detail)}
+                          </span>
+                        </div>
                       )}
                     </div>
-                  ))}
-                  {(detailUser.events || []).length === 0 && <p>Sin eventos</p>}
+                  ) : (
+                    <p className="dashboard__modal-no-event">Sin evento</p>
+                  )}
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}

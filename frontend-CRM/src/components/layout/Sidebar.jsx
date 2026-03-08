@@ -3,6 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants';
 import { useApp } from '../../context';
 import { useDashboardSection } from '../../context/DashboardSectionContext';
+import { useTheme } from '../../context/ThemeContext';
 import { getUserProfile } from '../../services';
 import './Sidebar.css';
 
@@ -27,6 +28,7 @@ function getDisplayName(profile) {
 export function Sidebar() {
   const { user, logout } = useApp();
   const { section, setSection } = useDashboardSection();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [profile, setProfile] = useState(null);
@@ -43,6 +45,7 @@ export function Sidebar() {
   const data = profile?.user ?? profile;
   const photoUrl = data?.photo_url ?? data?.photo_url_display ?? data?.profile_photo_url;
   const isDashboard = location.pathname === ROUTES.DASHBOARD;
+  const isLight = theme === 'light';
 
   const handleSectionClick = (e, item) => {
     if (item.section && item.to === ROUTES.DASHBOARD) {
@@ -110,7 +113,25 @@ export function Sidebar() {
       </nav>
 
       <div className="app-sidebar__footer">
+        <div className="app-sidebar__theme">
+          <span className="app-sidebar__theme-label">
+            {isLight ? 'Modo blanco' : 'Modo oscuro'}
+          </span>
+          <button
+            type="button"
+            className={`app-sidebar__toggle ${isLight ? 'app-sidebar__toggle--on' : ''}`}
+            onClick={toggleTheme}
+            aria-label={isLight ? 'Cambiar a modo oscuro' : 'Cambiar a modo blanco'}
+          >
+            <span className="app-sidebar__toggle-thumb" />
+          </button>
+        </div>
         <button type="button" className="app-sidebar__logout" onClick={handleLogout}>
+          <svg className="app-sidebar__logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
           Cerrar sesión
         </button>
       </div>

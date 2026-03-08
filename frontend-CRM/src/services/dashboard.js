@@ -25,6 +25,14 @@ export async function getUserProfile(userId) {
 
 /**
  * Detalle de usuario con eventos (para auditoría)
+ * Endpoint: audits/users/{id}/
+ */
+export async function getAuditUserDetail(userId) {
+  return api.get(`audits/users/${userId}/`);
+}
+
+/**
+ * Detalle de usuario (legacy, para otros usos)
  */
 export async function getUserDetail(userId) {
   return api.get(`users/${userId}/`);

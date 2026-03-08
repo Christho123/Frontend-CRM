@@ -1,4 +1,29 @@
-/* Pantalla completa, sin scroll en la página */
+/* Variables para tema claro */
+.main-layout--light {
+  --ml-bg: #f5f6fa;
+  --ml-sidebar-bg: #fff;
+  --ml-sidebar-border: rgba(0, 0, 0, 0.08);
+  --ml-content-bg: #f5f6fa;
+  --ml-text: #1a1d29;
+  --ml-text-muted: #5c5f6f;
+  --ml-card-bg: #fff;
+  --ml-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --ml-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Variables para tema oscuro */
+.main-layout--dark {
+  --ml-bg: #0f0f1a;
+  --ml-sidebar-bg: rgba(26, 26, 46, 0.95);
+  --ml-sidebar-border: rgba(255, 255, 255, 0.08);
+  --ml-content-bg: #0f0f1a;
+  --ml-text: #fff;
+  --ml-text-muted: rgba(255, 255, 255, 0.65);
+  --ml-card-bg: rgba(255, 255, 255, 0.05);
+  --ml-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --ml-card-shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
 .main-layout {
   position: fixed;
   inset: 0;
@@ -8,22 +33,21 @@
   height: 100dvh;
   display: flex;
   flex-direction: row;
-  background: #0f0f1a;
+  background: var(--ml-bg);
   overflow: hidden;
 }
 
-/* Contenido principal: ocupa el espacio, scroll interno */
 .main-layout__content {
   flex: 1;
   min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: var(--ml-content-bg);
 }
 
-/* 1920×1080 */
 @media (min-width: 1920px) and (min-height: 1080px) {
   .main-layout__content {
-    padding: 2rem 2.25rem;
+    padding: 2rem 2.5rem;
   }
 }
