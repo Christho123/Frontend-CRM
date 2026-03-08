@@ -1,0 +1,9 @@
+/**
+ * Variables CSS globales (colores, espaciado, tipografía)
+ */
+:root {
+  --color-primary: #646cff;
+  --color-primary-hover: #535bf2;
+  --spacing-unit: 8px;
+  --radius: 8px;
+}

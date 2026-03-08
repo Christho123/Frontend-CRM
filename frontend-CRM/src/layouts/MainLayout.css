@@ -1,0 +1,28 @@
+.main-layout {
+  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #0f0f1a;
+}
+
+.main-layout__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.main-layout__content {
+  flex: 1;
+  overflow: auto;
+  padding: 1.5rem;
+}
+
+/* 1920×1080 */
+@media (min-width: 1920px) and (min-height: 1080px) {
+  .main-layout__content {
+    padding: 2rem 2.25rem;
+  }
+}

@@ -1,0 +1,61 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-header__brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #fff;
+}
+
+/* 1920×1080 */
+@media (min-width: 1920px) and (min-height: 1080px) {
+  .app-header {
+    height: 64px;
+    padding: 0 2.25rem;
+  }
+  .app-header__brand {
+    font-size: 1.375rem;
+  }
+  .app-header__email {
+    font-size: 0.9375rem;
+  }
+  .app-header__logout {
+    padding: 0.5rem 1rem;
+    font-size: 0.9375rem;
+  }
+}
+
+.app-header__user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-header__email {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.app-header__logout {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.app-header__logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.3);
+}
