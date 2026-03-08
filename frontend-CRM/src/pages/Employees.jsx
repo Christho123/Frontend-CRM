@@ -14,6 +14,7 @@ import {
   getRoles,
 } from '../services';
 import { getDocumentTypes } from '../services/register';
+import { getMediaUrl } from '../config/baseURL';
 import './Employees.css';
 
 const INITIAL_FORM = {
@@ -326,6 +327,8 @@ export function Employees() {
         regions={regions}
         provinces={provinces}
         districts={districts}
+        setProvinces={setProvinces}
+        setDistricts={setDistricts}
         roles={roles}
         editingId={editingId}
         onSubmit={handleSubmit}
@@ -342,7 +345,7 @@ export function Employees() {
             <div className="employees__modal-body">
               {detailEmployee.photo_url && (
                 <div className="employees__modal-photo">
-                  <img src={detailEmployee.photo_url} alt="" />
+                  <img src={getMediaUrl(detailEmployee.photo_url)} alt="" />
                 </div>
               )}
               <div className="employees__modal-fields">
@@ -430,6 +433,8 @@ function EmployeeFormModal({
   regions,
   provinces,
   districts,
+  setProvinces,
+  setDistricts,
   roles,
   editingId,
   onSubmit,
@@ -501,7 +506,15 @@ function EmployeeFormModal({
             </div>
             <div className="employees__form-group">
               <label>Provincia</label>
-              <select value={form.province_id} onChange={(e) => setForm((f) => ({ ...f, province_id: e.target.value }))} disabled={!form.region_id}>
+              <select
+                value={form.province_id}
+                onChange={(e) => {
+                  const province = e.target.value;
+                  setForm((f) => ({ ...f, province_id: province, district_id: '' }));
+                  setDistricts([]);
+                }}
+                disabled={!form.region_id}
+              >
                 <option value="">Seleccionar</option>
                 {provinces.map((p) => (
                   <option key={p.id} value={p.id}>{p.name ?? p.province_name ?? `Provincia ${p.id}`}</option>

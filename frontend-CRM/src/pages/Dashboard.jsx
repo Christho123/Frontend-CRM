@@ -76,19 +76,33 @@ function DashboardSection() {
   );
 }
 
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
+
 function AuditoriaSection() {
   const [audits, setAudits] = useState({ results: [], count: 0 });
   const [loadingAudits, setLoadingAudits] = useState(true);
   const [detailUser, setDetailUser] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   useEffect(() => {
-    getAuditSessions()
-      .then((data) => setAudits({ results: data.results || [], count: data.count || 0 }))
+    setLoadingAudits(true);
+    getAuditSessions({ page, page_size: pageSize })
+      .then((data) => setAudits({ results: data.results || [], count: data.count ?? 0 }))
       .catch(() => setAudits({ results: [], count: 0 }))
       .finally(() => setLoadingAudits(false));
-  }, []);
+  }, [page, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(audits.count / pageSize));
+  const hasPrev = page > 1;
+  const hasNext = page < totalPages;
+
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setPage(1);
+  };
 
   const handleVerDetalle = (userId, eventFromRow) => {
     setLoadingDetail(true);
@@ -163,6 +177,49 @@ function AuditoriaSection() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {!loadingAudits && audits.count > 0 && (
+        <div className="dashboard__pagination">
+          <div className="dashboard__pagination-size">
+            <span className="dashboard__pagination-size-label">Filas por página:</span>
+            <div className="dashboard__pagination-size-btns">
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  className={`dashboard__pagination-size-btn ${pageSize === size ? 'dashboard__pagination-size-btn--active' : ''}`}
+                  onClick={() => handlePageSizeChange(size)}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="dashboard__pagination-arrows">
+            <button
+              type="button"
+              className="dashboard__pagination-arrow"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={!hasPrev}
+              aria-label="Página anterior"
+            >
+              ← Anterior
+            </button>
+            <span className="dashboard__pagination-info">
+              Página {page} de {totalPages}
+            </span>
+            <button
+              type="button"
+              className="dashboard__pagination-arrow"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={!hasNext}
+              aria-label="Página siguiente"
+            >
+              Siguiente →
+            </button>
+          </div>
         </div>
       )}
 

@@ -9,10 +9,13 @@ export async function getAnalyticsSummary() {
 
 /**
  * Sesiones de auditoría (paginado)
+ * Params: page, page_size, opcionales: user_id, active
+ * Ej: audits/sessions/?page=1&page_size=20
  */
 export async function getAuditSessions(params = {}) {
-  const sp = new URLSearchParams(params).toString();
-  return api.get(`audits/sessions/${sp ? `?${sp}` : ''}`);
+  const { page = 1, page_size = 20, ...rest } = params;
+  const search = new URLSearchParams({ page: String(page), page_size: String(page_size), ...rest });
+  return api.get(`audits/sessions/?${search.toString()}`);
 }
 
 /**

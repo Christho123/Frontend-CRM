@@ -35,7 +35,10 @@ export const api = {
       body: body instanceof FormData ? body : JSON.stringify(body),
     }),
   put: (endpoint, body) =>
-    fetchApi(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
+    fetchApi(endpoint, {
+      method: 'PUT',
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
   patch: (endpoint, body) =>
     fetchApi(endpoint, {
       method: 'PATCH',

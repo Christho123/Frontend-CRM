@@ -49,7 +49,7 @@ export async function updateEmployee(employeeId, payload) {
 export async function updateEmployeePhoto(employeeId, file) {
   const form = new FormData();
   form.append('photo', file);
-  return api.patch(`${BASE}/${employeeId}/photo/edit/`, form);
+  return api.put(`${BASE}/${employeeId}/photo/edit/`, form);
 }
 
 /**
