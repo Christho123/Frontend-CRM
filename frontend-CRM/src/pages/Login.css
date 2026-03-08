@@ -185,6 +185,49 @@
   cursor: not-allowed;
 }
 
+.login-password-wrap {
+  position: relative;
+}
+
+.login-password-wrap input {
+  padding-right: 2.75rem;
+}
+
+.login-password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.login-password-toggle:hover:not(:disabled) {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.login-password-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-password-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
 .login-code-input {
   text-align: center;
   letter-spacing: 0.5em;
@@ -278,6 +321,25 @@
 
 .login-back:hover:not(:disabled) {
   color: #a5b4fc;
+}
+
+.login-register {
+  margin: 1.25rem 0 0;
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: center;
+}
+
+.login-register__link {
+  color: #a5b4fc;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+
+.login-register__link:hover {
+  color: #c7d2fe;
+  text-decoration: underline;
 }
 
 /* 1920×1080 */

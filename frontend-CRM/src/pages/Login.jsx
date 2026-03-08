@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context';
 import { loginStep1, loginStep2 } from '../services/auth';
 import { ROUTES } from '../constants';
@@ -46,6 +46,7 @@ export function Login() {
   const [step, setStep] = useState(twoFaPending ? '2fa' : 'credentials');
   const [email, setEmail] = useState(twoFaPending?.email ?? '');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -72,7 +73,8 @@ export function Login() {
         setError('Respuesta inesperada del servidor.');
       }
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión. Revisa tu correo y contraseña.');
+      const isAuthError = err.status === 401 || err.status === 400 || /401|400|unauthorized|bad request/i.test(err.message || '');
+      setError(isAuthError ? 'Correo o contraseña incorrectos.' : 'Error al iniciar sesión. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -95,7 +97,7 @@ export function Login() {
       setTwoFaPending(null);
       navigate(ROUTES.DASHBOARD, { replace: true });
     } catch (err) {
-      setError(err.message || 'Código incorrecto o expirado. Intenta de nuevo.');
+      setError('Código incorrecto o expirado. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -139,16 +141,38 @@ export function Login() {
                 </div>
                 <div className="login-field">
                   <label htmlFor="password">Contraseña</label>
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    autoComplete="current-password"
-                    required
-                    disabled={loading}
-                  />
+                  <div className="login-password-wrap">
+                    <input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      required
+                      disabled={loading}
+                    />
+                    <button
+                      type="button"
+                      className="login-password-toggle"
+                      onClick={() => setShowPassword((v) => !v)}
+                      tabIndex={-1}
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                      disabled={loading}
+                    >
+                      {showPassword ? (
+                        <svg className="login-password-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg className="login-password-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 {error && <p className="login-msg login-msg--error">{error}</p>}
                 <button type="submit" className="login-btn" disabled={loading}>
@@ -158,6 +182,9 @@ export function Login() {
                     'Iniciar sesión'
                   )}
                 </button>
+                <p className="login-register">
+                  ¿No tienes cuenta? <Link to={ROUTES.REGISTER} className="login-register__link">Regístrate aquí</Link>
+                </p>
               </form>
             ) : (
               <form className="login-form" onSubmit={handleSubmit2FA}>
