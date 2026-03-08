@@ -1,17 +1,17 @@
-import { Header, Sidebar } from '../components/layout';
+import { Sidebar } from '../components/layout';
+import { DashboardSectionProvider } from '../context/DashboardSectionContext';
 import './MainLayout.css';
 
 /**
- * Layout principal: header + sidebar + contenido (solo para usuarios autenticados)
+ * Layout principal: sidebar fija a la izquierda + contenido (pantalla completa)
  */
 export function MainLayout({ children }) {
   return (
-    <div className="main-layout">
-      <Header />
-      <div className="main-layout__body">
+    <DashboardSectionProvider>
+      <div className="main-layout">
         <Sidebar />
         <div className="main-layout__content">{children}</div>
       </div>
-    </div>
+    </DashboardSectionProvider>
   );
 }

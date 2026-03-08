@@ -1,22 +1,23 @@
+/* Pantalla completa, sin scroll en la página */
 .main-layout {
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100vw;
   height: 100vh;
   height: 100dvh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   background: #0f0f1a;
-}
-
-.main-layout__body {
-  display: flex;
-  flex: 1;
-  min-height: 0;
   overflow: hidden;
 }
 
+/* Contenido principal: ocupa el espacio, scroll interno */
 .main-layout__content {
   flex: 1;
-  overflow: auto;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.5rem;
 }
 
