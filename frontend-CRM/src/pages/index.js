@@ -5,3 +5,4 @@ export { Register } from './Register';
 export { Contacts } from './Contacts';
 export { Deals } from './Deals';
 export { Companies } from './Companies';
+export { Employees } from './Employees';

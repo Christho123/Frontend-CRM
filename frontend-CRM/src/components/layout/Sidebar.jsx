@@ -10,6 +10,7 @@ import './Sidebar.css';
 const navItems = [
   { to: ROUTES.DASHBOARD, label: 'Dashboard', section: 'dashboard' },
   { to: ROUTES.DASHBOARD, label: 'Auditoría', section: 'auditoria' },
+  { to: ROUTES.RRHH, label: 'RRHH' },
   { to: ROUTES.CONTACTS, label: 'Contactos' },
   { to: ROUTES.DEALS, label: 'Deals' },
   { to: ROUTES.COMPANIES, label: 'Empresas' },

@@ -10,4 +10,5 @@ export const ROUTES = {
   CONTACTS: '/contacts',
   DEALS: '/deals',
   COMPANIES: '/companies',
+  RRHH: '/rrhh',
 };
