@@ -398,6 +398,18 @@
   transition: border-color 0.2s;
 }
 
+/* Ajustes específicos de selects en modo oscuro para que el dropdown no se vea "claro" ni vacío */
+.main-layout--dark .employees__form-group select {
+  background-color: #111827;
+  color: #f9fafb;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.main-layout--dark .employees__form-group select option {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
 .employees__form-group input:focus,
 .employees__form-group select:focus {
   border-color: #6366f1;
