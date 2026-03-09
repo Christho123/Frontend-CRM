@@ -98,9 +98,30 @@ export function Employees() {
       .catch(() => setDistricts([]));
   }, [form.province_id]);
 
+  // Si la provincia actual no pertenece a la lista filtrada por región, limpiar provincia y distrito
+  useEffect(() => {
+    if (!form.province_id) return;
+    const exists = provinces.some((p) => String(p.id) === String(form.province_id));
+    if (!exists) {
+      setForm((f) => ({ ...f, province_id: '', district_id: '' }));
+    }
+  }, [provinces, form.province_id]);
+
+  // Si el distrito actual no pertenece a la lista filtrada por provincia, limpiar distrito
+  useEffect(() => {
+    if (!form.district_id) return;
+    const exists = districts.some((d) => String(d.id) === String(form.district_id));
+    if (!exists) {
+      setForm((f) => ({ ...f, district_id: '' }));
+    }
+  }, [districts, form.district_id]);
+
   const handleOpenCreate = () => {
     setEditingId(null);
     setForm(INITIAL_FORM);
+    // Forzar limpieza total de combos dependientes
+    setProvinces([]);
+    setDistricts([]);
     setPhotoFile(null);
     setDeletePhotoFlag(false);
     setError('');
@@ -133,6 +154,9 @@ export function Employees() {
         salary: e.salary ?? '',
         address: e.address ?? '',
       });
+      // Forzar recálculo limpio de provincias/distritos para este empleado
+      setProvinces([]);
+      setDistricts([]);
       setEditingId(emp.id);
       setFormOpen(true);
     } catch (err) {
@@ -497,7 +521,20 @@ function EmployeeFormModal({
             </div>
             <div className="employees__form-group">
               <label>Región</label>
-              <select value={form.region_id} onChange={(e) => { const region = e.target.value; setForm((f) => ({ ...f, region_id: region, province_id: '', district_id: '', })); setProvinces([]);setDistricts([]); }} >
+              <select
+                value={form.region_id}
+                onChange={(e) => {
+                  const region = e.target.value;
+                  setForm((f) => ({
+                    ...f,
+                    region_id: region,
+                    province_id: '',
+                    district_id: '',
+                  }));
+                  setProvinces([]);
+                  setDistricts([]);
+                }}
+              >
                 <option value="">Seleccionar</option>
                 {regions.map((r) => (
                   <option key={r.id} value={r.id}>{r.name ?? r.region_name ?? `Región ${r.id}`}</option>

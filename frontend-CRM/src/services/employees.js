@@ -81,7 +81,7 @@ export async function getRegions() {
 export async function getProvinces(regionId) {
   if (!regionId) return [];
   try {
-    const data = await api.get(`locations/provinces/?region_id=${regionId}`);
+    const data = await api.get(`locations/provinces/?region=${regionId}`);
     return Array.isArray(data) ? data : data.results ?? data.data ?? [];
   } catch {
     return [];
@@ -91,7 +91,7 @@ export async function getProvinces(regionId) {
 export async function getDistricts(provinceId) {
   if (!provinceId) return [];
   try {
-    const data = await api.get(`locations/districts/?province_id=${provinceId}`);
+    const data = await api.get(`locations/districts/?province=${provinceId}`);
     return Array.isArray(data) ? data : data.results ?? data.data ?? [];
   } catch {
     return [];
