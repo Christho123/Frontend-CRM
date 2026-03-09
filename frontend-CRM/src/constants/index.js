@@ -7,8 +7,8 @@ export const ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   DASHBOARD: '/dashboard',
-  CONTACTS: '/contacts',
-  DEALS: '/deals',
-  COMPANIES: '/companies',
   RRHH: '/rrhh',
+  RRHH_ROLES: '/rrhh/roles',
+  PRODUCTS: '/products',
+  ANALYSIS: '/analysis',
 };

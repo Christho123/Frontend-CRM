@@ -3,14 +3,17 @@ import { api } from './api';
 const BASE = 'employees/employee';
 
 /**
- * Listar empleados (con búsqueda opcional)
+ * Listar empleados (paginado, con búsqueda opcional)
+ * Params: page, page_size, search
  */
 export async function getEmployees(params = {}) {
-  const sp = new URLSearchParams(params).toString();
-  const url = `${BASE}/${sp ? `?${sp}` : ''}`;
-  const data = await api.get(url);
-  if (Array.isArray(data)) return data;
-  return data.results ?? data.data ?? data.employees ?? [];
+  const { page = 1, page_size = 10, ...rest } = params;
+  const search = new URLSearchParams({ page: String(page), page_size: String(page_size), ...rest });
+  const data = await api.get(`${BASE}/?${search.toString()}`);
+  if (Array.isArray(data)) return { results: data, count: data.length };
+  const results = data.results ?? data.data ?? data.employees ?? [];
+  const count = data.count ?? data.total ?? results.length;
+  return { results, count };
 }
 
 /**

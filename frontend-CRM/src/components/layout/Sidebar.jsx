@@ -10,10 +10,15 @@ import './Sidebar.css';
 const navItems = [
   { to: ROUTES.DASHBOARD, label: 'Dashboard', section: 'dashboard' },
   { to: ROUTES.DASHBOARD, label: 'Auditoría', section: 'auditoria' },
-  { to: ROUTES.RRHH, label: 'RRHH' },
-  { to: ROUTES.CONTACTS, label: 'Contactos' },
-  { to: ROUTES.DEALS, label: 'Deals' },
-  { to: ROUTES.COMPANIES, label: 'Empresas' },
+  {
+    label: 'RRHH',
+    children: [
+      { to: ROUTES.RRHH, label: 'Empleados' },
+      { to: ROUTES.RRHH_ROLES, label: 'Roles' },
+    ],
+  },
+  { to: ROUTES.PRODUCTS, label: 'Productos' },
+  { to: ROUTES.ANALYSIS, label: 'Análisis' },
 ];
 
 function getDisplayName(profile) {
@@ -47,6 +52,7 @@ export function Sidebar() {
   const photoUrl = data?.photo_url ?? data?.photo_url_display ?? data?.profile_photo_url;
   const isDashboard = location.pathname === ROUTES.DASHBOARD;
   const isLight = theme === 'light';
+  const isRRHH = location.pathname === ROUTES.RRHH || location.pathname === ROUTES.RRHH_ROLES;
 
   const handleSectionClick = (e, item) => {
     if (item.section && item.to === ROUTES.DASHBOARD) {
@@ -97,6 +103,28 @@ export function Sidebar() {
               >
                 {item.label}
               </button>
+            );
+          }
+          if (item.children) {
+            return (
+              <div key={item.label} className="app-sidebar__group">
+                <span className={`app-sidebar__group-label ${isRRHH ? 'app-sidebar__group-label--active' : ''}`}>
+                  {item.label}
+                </span>
+                <div className="app-sidebar__subnav">
+                  {item.children.map((child) => (
+                    <NavLink
+                      key={child.to}
+                      to={child.to}
+                      className={({ isActive }) =>
+                        `app-sidebar__link app-sidebar__subnav-link ${isActive ? 'app-sidebar__link--active' : ''}`
+                      }
+                    >
+                      {child.label}
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
             );
           }
           return (

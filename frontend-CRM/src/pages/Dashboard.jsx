@@ -85,7 +85,7 @@ function AuditoriaSection() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     setLoadingAudits(true);

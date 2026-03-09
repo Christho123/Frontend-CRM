@@ -16,3 +16,16 @@ export {
   getDistricts,
   getRoles,
 } from './employees';
+export {
+  getProducts,
+  getProductDetail,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  uploadProductPhoto,
+  updateProductPhoto,
+  deleteProductPhoto,
+  getProductCategories,
+  getProductSuppliers,
+  getProductBrands,
+} from './products';

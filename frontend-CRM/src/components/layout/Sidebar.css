@@ -120,6 +120,42 @@
   background: rgba(99, 102, 241, 0.2);
 }
 
+.app-sidebar__group {
+  margin-bottom: 0.25rem;
+}
+
+.app-sidebar__group-label {
+  display: block;
+  padding: 0.5rem 1rem 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ml-text-muted);
+}
+
+.app-sidebar__group-label--active {
+  color: rgba(99, 102, 241, 0.9);
+}
+
+.main-layout--dark .app-sidebar__group-label--active {
+  color: #a5b4fc;
+}
+
+.app-sidebar__subnav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--ml-sidebar-border);
+  margin-left: 1rem;
+}
+
+.app-sidebar__subnav-link {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
 .app-sidebar__footer {
   margin-top: auto;
   padding: 1rem 1rem 1.25rem;

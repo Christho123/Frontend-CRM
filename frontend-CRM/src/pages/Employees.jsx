@@ -16,6 +16,9 @@ import {
 import { getDocumentTypes } from '../services/register';
 import { getMediaUrl } from '../config/baseURL';
 import './Employees.css';
+import './Dashboard.css';
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 const INITIAL_FORM = {
   name: '',
@@ -36,9 +39,11 @@ const INITIAL_FORM = {
 };
 
 export function Employees() {
-  const [employees, setEmployees] = useState([]);
+  const [employeesData, setEmployeesData] = useState({ results: [], count: 0 });
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(INITIAL_FORM);
@@ -58,17 +63,27 @@ export function Employees() {
 
   const loadEmployees = useCallback(() => {
     setLoading(true);
-    const params = search.trim() ? { search: search.trim() } : {};
+    const params = { page, page_size: pageSize };
+    if (search.trim()) params.search = search.trim();
     getEmployees(params)
-      .then((data) => setEmployees(Array.isArray(data) ? data : []))
-      .catch(() => setEmployees([]))
+      .then((data) =>
+        setEmployeesData({
+          results: Array.isArray(data.results) ? data.results : [],
+          count: data.count ?? 0,
+        })
+      )
+      .catch(() => setEmployeesData({ results: [], count: 0 }))
       .finally(() => setLoading(false));
-  }, [search]);
+  }, [page, pageSize, search]);
 
   useEffect(() => {
-    const t = setTimeout(loadEmployees, 300);
+    const t = setTimeout(loadEmployees, search ? 300 : 0);
     return () => clearTimeout(t);
   }, [loadEmployees]);
+
+  useEffect(() => {
+    if (search) setPage(1);
+  }, [search]);
 
   useEffect(() => {
     getDocumentTypes().then(setDocumentTypes).catch(() => setDocumentTypes([]));
@@ -261,6 +276,16 @@ export function Employees() {
   const getDocTypeName = (emp) => emp.document_type?.name ?? emp.document_type_name ?? '—';
   const getRoleName = (emp) => emp.rol?.name ?? emp.rol_name ?? '—';
 
+  const employees = employeesData.results;
+  const totalPages = Math.max(1, Math.ceil(employeesData.count / pageSize));
+  const hasPrev = page > 1;
+  const hasNext = page < totalPages;
+
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setPage(1);
+  };
+
   return (
     <main className="employees">
       <header className="employees__header">
@@ -337,6 +362,49 @@ export function Employees() {
           </table>
         )}
       </div>
+
+      {!loading && employeesData.count > 0 && (
+        <div className="dashboard__pagination">
+          <div className="dashboard__pagination-size">
+            <span className="dashboard__pagination-size-label">Filas por página:</span>
+            <div className="dashboard__pagination-size-btns">
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  className={`dashboard__pagination-size-btn ${pageSize === size ? 'dashboard__pagination-size-btn--active' : ''}`}
+                  onClick={() => handlePageSizeChange(size)}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="dashboard__pagination-arrows">
+            <button
+              type="button"
+              className="dashboard__pagination-arrow"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={!hasPrev}
+              aria-label="Página anterior"
+            >
+              ← Anterior
+            </button>
+            <span className="dashboard__pagination-info">
+              Página {page} de {totalPages}
+            </span>
+            <button
+              type="button"
+              className="dashboard__pagination-arrow"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={!hasNext}
+              aria-label="Página siguiente"
+            >
+              Siguiente →
+            </button>
+          </div>
+        </div>
+      )}
 
       <EmployeeFormModal
         open={formOpen}
